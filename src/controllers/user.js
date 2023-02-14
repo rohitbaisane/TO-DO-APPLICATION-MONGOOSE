@@ -10,6 +10,15 @@ const getUser = async (req, res) => {
     })
 }
 
+const signIn = async (req, res) => {
+    const { email, password } = req.body;
+    const response = await userService.signIn({ email, password });
+    return res.json({
+        data: response,
+        success: true,
+    })
+
+}
 const createUser = async (req, res) => {
     const { name, email, password } = req.body;
     const user = await userService.createUser({
@@ -47,4 +56,5 @@ module.exports = {
     createUser,
     updateUser,
     deleteUser,
+    signIn
 }
