@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express();
 
+require("./db");
+const { PORT } = require("./config/config");
 // prepare and start the starver.
 
 const prepareAndStartServer = async (req, res) => {
@@ -10,7 +12,7 @@ const prepareAndStartServer = async (req, res) => {
     app.use(express.json());
 
 
-    app.listen(3000, () => {
+    app.listen(PORT, () => {
         console.log("Server is listening");
     })
 
