@@ -15,7 +15,10 @@ const userSchema = new mongoose.Schema({
         minLength: 8,
         maxLength: 100,
     },
-    tasks: [mongoose.Schema.Types.ObjectId],
+    tasks: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Task",
+    }],
 
 }, {
     timestamps: true
