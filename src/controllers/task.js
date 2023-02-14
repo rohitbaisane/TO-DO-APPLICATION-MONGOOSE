@@ -22,7 +22,7 @@ const createTask = async (req, res) => {
     try {
         const { description } = req.body;
         const task = await taskService.createTask({
-            description
+            description,
         });
         SuccessResponseBody.data = task;
         SuccessResponseBody.message = "Successfully created a task";

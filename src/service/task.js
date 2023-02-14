@@ -1,4 +1,5 @@
 const Task = require("../models/task");
+const User = require("../modles/User");
 
 const { ServerErrorCodes, ClientErrorCodes, SuccessCodes } = require("../utils/status-codes");
 const { AppError, ClientError } = require("../utils/Error");
@@ -9,8 +10,7 @@ const getTask = async (taskId) => {
         return task;
     }
     catch (err) {
-        console.log(err);
-        throw new AppError(err.name, err.message);
+        throw new AppError("Error in service layer", err.message);
     }
 }
 
@@ -20,21 +20,24 @@ const createTask = async (data) => {
         return task;
     }
     catch (err) {
-        console.log(err.name);
-        console.log(err.message);
-        throw new AppError(err.name, err.message);
+        if (err.name == "ValidationError") {
+            throw new ClientError("Cannot create user", err.message, ClientErrorCodes.BAD_REQUESET);
+        }
+        throw new AppError("Error in service layer", err.message);
     }
 
 }
 
 const updateTask = async (taskId, data) => {
     try {
-        const task = await Task.findByIdAndUpdate(taskId, data, { new: true });
+        const task = await Task.findByIdAndUpdate(taskId, data, { new: true, runValidators: true });
         return task;
     }
     catch (err) {
-        console.log(err);
-        throw new AppError(err.name, err.message);
+        if (err.name == "ValidationError") {
+            throw new ClientError("Cannot create user", err.message, ClientErrorCodes.BAD_REQUESET);
+        }
+        throw new AppError("Error in service layer", err.message);
     }
 }
 const deleteTask = async (taskId) => {
@@ -43,8 +46,7 @@ const deleteTask = async (taskId) => {
         return task;
     }
     catch (err) {
-        console.log(err);
-        throw new AppError(err.name, err.message);
+        throw new AppError("Error in service layer", err.message);
     }
 }
 
