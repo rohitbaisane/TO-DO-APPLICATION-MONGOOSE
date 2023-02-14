@@ -2,49 +2,88 @@ const User = require("../models/user");
 
 const jwt = require("jsonwebtoken");
 
+const { ServerErrorCodes, ClientErrorCodes, SuccessCodes } = require("../utils/status-codes");
+const { AppError, ClientError } = require("../utils/Error");
 
 const signIn = async (data) => {
 
-    const { email, password } = data;
-
-    //Check whether user exist for given email id or not.
-    const user = getUserByEmail(email);
-    //create jwt token 
-    const token = createJwtToken(user);
-    return token;
+    try {
+        const { email, password } = data;
+        //Check whether user exist for given email id or not.
+        const user = getUserByEmail(email);
+        if (!user)
+            throw new ClientError("No user exist for corrosponding email", ClientErrorCodes.BAD_REQUESET);
+        //create jwt token 
+        const token = createJwtToken(user);
+        return token;
+    }
+    catch (err) {
+        console.log(err);
+        throw err;
+    }
 }
 
 
 const getUser = async (userId) => {
-
-    const user = await User.findById(userId);
-    return user;
+    try {
+        const user = await User.findById(userId);
+        return user;
+    }
+    catch (err) {
+        throw new AppError("Error in Service layer", "Cannot fetch user", err.message, ServerErrorCodes.INTERNAL_SERVER_ERROR);
+    }
 }
 
 const createUser = async (data) => {
-    const user = await User.create(data);
-    return user;
-
+    try {
+        const user = await User.create(data);
+        return user;
+    }
+    catch (err) {
+        console.log(err);
+        throw err;
+    }
 }
 
 const updateUser = async (userId, data) => {
-    console.log(data);
-    const user = await User.findByIdAndUpdate(userId, data, { new: true });
-    console.log(user);
-    return user;
+    try {
+        const user = await User.findByIdAndUpdate(userId, data, { new: true });
+        return user;
+    }
+    catch (err) {
+        console.log(err);
+        throw err;
+    }
 }
 const deleteUser = async (userId) => {
-    const user = await User.findByIdAndRemove(userId);
-    return user;
+
+    try {
+        const user = await User.findByIdAndRemove(userId);
+        return user;
+    }
+    catch (err) {
+        console.log(err);
+        throw err;
+    }
 }
 
 async function getUserByEmail(email) {
-    const user = await User.findOne({ email });
-    return user;
+    try {
+        const user = await User.findOne({ email });
+        return user;
+    }
+    catch (err) {
+        throw err;
+    }
 }
 function createJwtToken(user) {
-    const token = jwt.sign({ id: user._id }, "This is my secreate key");
-    return token;
+    try {
+        const token = jwt.sign({ id: user._id }, "This is my secreate key");
+        return token;
+    }
+    catch (err) {
+        throw err;
+    }
 }
 
 module.exports = {
