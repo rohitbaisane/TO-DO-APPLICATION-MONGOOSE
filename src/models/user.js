@@ -12,7 +12,8 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
-        length: [8, 100]
+        minLength: 8,
+        maxLength: 100,
     },
     tasks: [mongoose.Schema.Types.ObjectId],
 
