@@ -1,7 +1,7 @@
 const { userService } = require("../service/index");
 
 const { SuccessResponseBody, ErrorResponseBody } = require("../utils/response");
-const { ServerErrorCodes, SuccessCodes } = require("../utils/status-codes");
+const { ServerErrorCodes, ClientErrorCodes, SuccessCodes } = require("../utils/status-codes");
 
 
 const getUser = async (req, res) => {
@@ -14,7 +14,9 @@ const getUser = async (req, res) => {
     catch (err) {
         ErrorResponseBody.message = "Cannot fetch user";
         ErrorResponseBody.error = err.message;
-        const statusCode = err.statusCode || ServerErrorCodes.INTERNAL_SERVER_ERROR;
+        let statusCode = err.statusCode || ServerErrorCodes.INTERNAL_SERVER_ERROR;
+        if (err.name = "Validationerror")
+            statusCode = ClientErrorCodes.BAD_REQUESET;
         return res.status(statusCode).json(ErrorResponseBody);
     }
 }
@@ -31,7 +33,9 @@ const signIn = async (req, res) => {
         console.log(err);
         ErrorResponseBody.message = "Cannot signin";
         ErrorResponseBody.error = err.message;
-        const statusCode = err.statusCode || ServerErrorCodes.INTERNAL_SERVER_ERROR;;
+        let statusCode = err.statusCode || ServerErrorCodes.INTERNAL_SERVER_ERROR;
+        if (err.name = "Validationerror")
+            statusCode = ClientErrorCodes.BAD_REQUESET;
         return res.status(statusCode).json(ErrorResponseBody);
     }
 
@@ -52,7 +56,9 @@ const signUp = async (req, res) => {
         console.log(err);
         ErrorResponseBody.message = "Cannot create user";
         ErrorResponseBody.error = err.message;
-        const statusCode = err.statusCode || ServerErrorCodes.INTERNAL_SERVER_ERROR;
+        let statusCode = err.statusCode || ServerErrorCodes.INTERNAL_SERVER_ERROR;
+        if (err.name = "Validationerror")
+            statusCode = ClientErrorCodes.BAD_REQUESET;
         return res.status(statusCode).json(ErrorResponseBody);
     }
 }
@@ -60,14 +66,16 @@ const signUp = async (req, res) => {
 const updateUser = async (req, res) => {
     try {
         const user = await userService.updateUser(req.user.id, req.body);
-        SuccessResponseBody.data = response;
+        SuccessResponseBody.data = user;
         SuccessResponseBody.message = "Successfully updated a user";
         return res.status(SuccessCodes.OK).json(SuccessResponseBody);
     }
     catch (err) {
         ErrorResponseBody.message = "Cannot update user";
         ErrorResponseBody.error = err.message;
-        const statusCode = err.statusCode || ServerErrorCodes.INTERNAL_SERVER_ERROR;
+        let statusCode = err.statusCode || ServerErrorCodes.INTERNAL_SERVER_ERROR;
+        if (err.name = "Validationerror")
+            statusCode = ClientErrorCodes.BAD_REQUESET;
         return res.status(statusCode).json(ErrorResponseBody);
     }
 }

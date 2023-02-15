@@ -1,7 +1,7 @@
 const { taskService } = require("../service/index");
 
 const { SuccessResponseBody, ErrorResponseBody } = require("../utils/response");
-const { ServerErrorCodes, SuccessCodes } = require("../utils/status-codes");
+const { ServerErrorCodes, ClientErrorCodes, SuccessCodes } = require("../utils/status-codes");
 
 
 const getTask = async (req, res) => {
@@ -14,7 +14,10 @@ const getTask = async (req, res) => {
     catch (err) {
         ErrorResponseBody.message = "Cannot fetch task";
         ErrorResponseBody.error = err.message;
-        return res.status(err.statusCode).json(ErrorResponseBody);
+        let statusCode = err.statusCode || ServerErrorCodes.INTERNAL_SERVER_ERROR;
+        if (err.name = "Validationerror")
+            statusCode = ClientErrorCodes.BAD_REQUESET;
+        return res.status(statusCode).json(ErrorResponseBody);
     }
 }
 
@@ -31,7 +34,10 @@ const createTask = async (req, res) => {
     catch (err) {
         ErrorResponseBody.message = "Cannot create task";
         ErrorResponseBody.error = err.message;
-        return res.status(err.statusCode).json(ErrorResponseBody);
+        let statusCode = err.statusCode || ServerErrorCodes.INTERNAL_SERVER_ERROR;
+        if (err.name = "Validationerror")
+            statusCode = ClientErrorCodes.BAD_REQUESET;
+        return res.status(statusCode).json(ErrorResponseBody);
     }
 }
 
@@ -45,7 +51,10 @@ const updateTask = async (req, res) => {
     catch (err) {
         ErrorResponseBody.message = "Cannot update task";
         ErrorResponseBody.error = err.message;
-        return res.status(err.statusCode).json(ErrorResponseBody);
+        let statusCode = err.statusCode || ServerErrorCodes.INTERNAL_SERVER_ERROR;
+        if (err.name = "Validationerror")
+            statusCode = ClientErrorCodes.BAD_REQUESET;
+        return res.status(statusCode).json(ErrorResponseBody);
     }
 }
 
@@ -60,7 +69,10 @@ const deleteTask = async (req, res) => {
     catch (err) {
         ErrorResponseBody.message = "Cannot delete task";
         ErrorResponseBody.error = err.message;
-        return res.status(err.statusCode).json(ErrorResponseBody);
+        let statusCode = err.statusCode || ServerErrorCodes.INTERNAL_SERVER_ERROR;
+        if (err.name = "Validationerror")
+            statusCode = ClientErrorCodes.BAD_REQUESET;
+        return res.status(statusCode).json(ErrorResponseBody);
     }
 }
 

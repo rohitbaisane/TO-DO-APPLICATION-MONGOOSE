@@ -3,8 +3,9 @@ const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 
 const { ClientErrorCodes } = require("../utils/status-codes");
-
 const { JWT_SECREATE_KEY } = require("../config/config");
+
+const bcrypt = require("bcryptjs");
 
 const signIn = async (data) => {
 
@@ -18,7 +19,7 @@ const signIn = async (data) => {
             statusCode: ClientErrorCodes.BAD_REQUESET,
         };
     }
-    else if (user.password != password) {
+    else if (!bcrypt.compareSync(password, user.password)) {
         throw {
             message: "Password is wrong",
             statusCode: ClientErrorCodes.BAD_REQUESET,
