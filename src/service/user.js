@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 
 const { ClientErrorCodes } = require("../utils/status-codes");
 
+const { JWT_SECREATE_KEY } = require("../config/config");
 
 const signIn = async (data) => {
 
@@ -57,7 +58,7 @@ async function getUserByEmail(email) {
     return user;
 }
 function createJwtToken(user) {
-    const token = jwt.sign({ id: user._id }, "This is my secreate key", { expiresIn: "8h" });
+    const token = jwt.sign({ id: user._id }, JWT_SECREATE_KEY, { expiresIn: "8h" });
     return token;
 }
 

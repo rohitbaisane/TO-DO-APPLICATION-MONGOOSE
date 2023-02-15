@@ -3,6 +3,9 @@ const { userService } = require("../service/index");
 
 const { ServerErrorCodes, ClientErrorCodes } = require("../utils/status-codes");
 const { ErrorResponseBody } = require("../utils/response");
+
+const { JWT_SECREATE_KEY } = require("../config/config");
+
 const isValidUser = async (req, res, next) => {
 
     try {
@@ -13,7 +16,7 @@ const isValidUser = async (req, res, next) => {
                 statusCode: ClientErrorCodes.BAD_REQUESET
             };
         }
-        const object = jwt.verify(token, "This is my secreate key");
+        const object = jwt.verify(token, JWT_SECREATE_KEY);
         const user = await userService.getUser(object.id);
         if (!user) {
             throw {

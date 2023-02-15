@@ -1,8 +1,9 @@
 const Task = require("../models/task");
 const User = require("../models/user");
 
-const { ServerErrorCodes, ClientErrorCodes, SuccessCodes } = require("../utils/status-codes");
+const { ClientErrorCodes } = require("../utils/status-codes");
 
+// GET TASK BY ID -> /task/:id
 const getTask = async (taskId, user) => {
     const task = await Task.findOne({ _id: taskId, userId: user._id });
     if (!task) {
