@@ -49,6 +49,7 @@ const signUp = async (req, res) => {
         return res.status(SuccessCodes.CREATED).json(SuccessResponseBody);
     }
     catch (err) {
+        console.log(err);
         ErrorResponseBody.message = "Cannot create user";
         ErrorResponseBody.error = err.message;
         const statusCode = err.statusCode || ServerErrorCodes.INTERNAL_SERVER_ERROR;

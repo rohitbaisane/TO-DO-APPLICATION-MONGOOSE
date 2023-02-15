@@ -20,6 +20,7 @@ const createTask = async (data) => {
     return task;
 }
 
+// UPDATE TASK BY ID -> PATCH -> /task/:id
 const updateTask = async (taskId, data, userId) => {
     const task = await Task.findOneAndUpdate({ _id: taskId, userId }, data, { new: true, runValidators: true });
     if (!task) {
@@ -31,6 +32,8 @@ const updateTask = async (taskId, data, userId) => {
     return task;
 
 }
+
+// DELETE TASK BY ID -> /task/:id
 const deleteTask = async (taskId, userId) => {
     const task = await Task.findOneAndRemove({ _id: taskId, userId });
     if (!task) {
