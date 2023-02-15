@@ -2,93 +2,63 @@ const User = require("../models/user");
 
 const jwt = require("jsonwebtoken");
 
-const { ServerErrorCodes, ClientErrorCodes } = require("../utils/status-codes");
-const { AppError, ClientError } = require("../utils/Error");
+const { ClientErrorCodes } = require("../utils/status-codes");
+
 
 const signIn = async (data) => {
 
-    try {
-        const { email, password } = data;
-        //Check whether user exist for given email id or not.
-        const user = getUserByEmail(email);
-        if (!user)
-            throw new ClientError("Cannot signin", "Email is incorrect", ClientErrorCodes.BAD_REQUESET);
+    const { email, password } = data;
 
-        if (user.password != password)
-            throw new ClientError("Cannot signin", "Password is incorrect", ClientErrorCodes.BAD_REQUESET);
-        //create jwt token 
-        const token = createJwtToken(user);
-        return token;
+    //Check whether user exist for given email id or not.
+    const user = await getUserByEmail(email);
+    if (!user) {
+        throw {
+            message: "Email id is wrong",
+            statusCode: ClientErrorCodes.BAD_REQUESET,
+        };
     }
-    catch (err) {
-        throw new AppError("Error in service layer", err.message);
+    else if (user.password != password) {
+        throw {
+            message: "Password is wrong",
+            statusCode: ClientErrorCodes.BAD_REQUESET,
+        };
     }
+
+    //create jwt token 
+    const token = createJwtToken(user);
+    return token;
 }
 
-
+// GET USER BY ID -,  /user/:id 
 const getUser = async (userId) => {
-    try {
-        const user = await User.findById(userId);
-        return user;
-    }
-    catch (err) {
-        throw new AppError("Error in service layer", err.message);
-    }
+    const user = await User.findById(userId);
+    return user;
 }
 
 const createUser = async (data) => {
-    try {
-        const user = await User.create(data);
-        return user;
-    }
-    catch (err) {
-        if (err.name == "ValidationError") {
-            throw new ClientError("Cannot create user", err.message, ClientErrorCodes.BAD_REQUESET);
-        }
-        throw new AppError("Error in service layer", err.message);
-    }
+    const user = await User.create(data);
+    return user;
 }
 
+// UPDATE USER BY ID -> /user/:id
 const updateUser = async (userId, data) => {
-    try {
-        const user = await User.findByIdAndUpdate(userId, data, { new: true, runValidators: true });
-        return user;
-    }
-    catch (err) {
-        if (err.name == "ValidationError") {
-            throw new ClientError("Cannot create user", err.message, ClientErrorCodes.BAD_REQUESET);
-        }
-        throw new AppError("Error in service layer", err.message);
-    }
+    const updatedUser = await User.findByIdAndUpdate(userId, data, { new: true, runValidators: true });
+    return updatedUser;
 }
-const deleteUser = async (userId) => {
 
-    try {
-        const user = await User.findByIdAndRemove(userId);
-        return user;
-    }
-    catch (err) {
-        throw new AppError("Error in service layer", err.message);
-    }
+// DELETE USER BY ID -> /user/:id
+const deleteUser = async (userId) => {
+    const deletedUser = await User.findByIdAndRemove(userId);
+    return deletedUser;
 }
 
 async function getUserByEmail(email) {
-    try {
-        const user = await User.findOne({ email });
-        return user;
-    }
-    catch (err) {
-        throw new AppError("Error in service layer", err.message);
-    }
+    const user = await User.findOne({ email });
+    return user;
 }
 function createJwtToken(user) {
-    try {
-        const token = jwt.sign({ id: user._id }, "This is my secreate key", { expiresIn: "8h" });
-        return token;
-    }
-    catch (err) {
-        throw new AppError("Error in service layer", err.message);
-    }
+    const token = jwt.sign({ id: user._id }, "This is my secreate key", { expiresIn: "8h" });
+    return token;
 }
 
 module.exports = {

@@ -1,15 +1,16 @@
+
 const SuccessResponseBody = {
     data: null,
+    message: null,
     error: {},
     success: true,
-    message: null,
 };
 
 const ErrorResponseBody = {
     data: {},
+    message: null,
     error: null,
     success: false,
-    message: null,
 };
 
 module.exports = {

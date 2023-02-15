@@ -15,14 +15,10 @@ const userSchema = new mongoose.Schema({
         minLength: 8,
         maxLength: 100,
     },
-    tasks: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Task",
-    }],
 
 }, {
     timestamps: true
 });
 
-const UserModel = mongoose.model("User", userSchema);
+const UserModel = mongoose.model("User", userSchema, "users");
 module.exports = UserModel;

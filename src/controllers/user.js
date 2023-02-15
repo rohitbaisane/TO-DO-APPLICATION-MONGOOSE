@@ -1,6 +1,6 @@
 const { userService } = require("../service/index");
 
-const { SuccessResponseBody, ErrorResponseBody } = require("../utils/responsebody");
+const { SuccessResponseBody, ErrorResponseBody } = require("../utils/response");
 const { ServerErrorCodes, SuccessCodes } = require("../utils/status-codes");
 
 
@@ -12,9 +12,10 @@ const getUser = async (req, res) => {
         return res.status(SuccessCodes.OK).json(SuccessResponseBody);
     }
     catch (err) {
-        ErrorResponseBody.message = err.message;
-        ErrorResponseBody.error = err.explanation;
-        return res.status(err.statusCode).json(ErrorResponseBody);
+        ErrorResponseBody.message = "Cannot fetch user";
+        ErrorResponseBody.error = err.message;
+        const statusCode = err.statusCode || ServerErrorCodes.INTERNAL_SERVER_ERROR;
+        return res.status(statusCode).json(ErrorResponseBody);
     }
 }
 
@@ -27,13 +28,15 @@ const signIn = async (req, res) => {
         return res.status(SuccessCodes.OK).json(SuccessResponseBody);
     }
     catch (err) {
-        ErrorResponseBody.message = err.message;
-        ErrorResponseBody.error = err.explanation;
-        return res.status(err.statusCode).json(ErrorResponseBody);
+        console.log(err);
+        ErrorResponseBody.message = "Cannot signin";
+        ErrorResponseBody.error = err.message;
+        const statusCode = err.statusCode || ServerErrorCodes.INTERNAL_SERVER_ERROR;;
+        return res.status(statusCode).json(ErrorResponseBody);
     }
 
 }
-const createUser = async (req, res) => {
+const signUp = async (req, res) => {
     try {
         const { name, email, password } = req.body;
         const user = await userService.createUser({
@@ -42,13 +45,14 @@ const createUser = async (req, res) => {
             password
         });
         SuccessResponseBody.data = user;
-        SuccessResponseBody.message = "Successfully created a user";
-        return res.status(err.statusCode).json(SuccessResponseBody);
+        SuccessResponseBody.message = "Successfully created account";
+        return res.status(SuccessCodes.CREATED).json(SuccessResponseBody);
     }
     catch (err) {
-        ErrorResponseBody.message = err.message;
-        ErrorResponseBody.error = err.explanation;
-        return res.status(err.statusCode).json(ErrorResponseBody);
+        ErrorResponseBody.message = "Cannot create user";
+        ErrorResponseBody.error = err.message;
+        const statusCode = err.statusCode || ServerErrorCodes.INTERNAL_SERVER_ERROR;
+        return res.status(statusCode).json(ErrorResponseBody);
     }
 }
 
@@ -60,9 +64,10 @@ const updateUser = async (req, res) => {
         return res.status(SuccessCodes.OK).json(SuccessResponseBody);
     }
     catch (err) {
-        ErrorResponseBody.message = err.message;
-        ErrorResponseBody.error = err.explanation;
-        return res.status(err.statusCode).json(ErrorResponseBody);
+        ErrorResponseBody.message = "Cannot update user";
+        ErrorResponseBody.error = err.message;
+        const statusCode = err.statusCode || ServerErrorCodes.INTERNAL_SERVER_ERROR;
+        return res.status(statusCode).json(ErrorResponseBody);
     }
 }
 
@@ -75,15 +80,16 @@ const deleteUser = async (req, res) => {
         return res.status(SuccessCodes.OK).json(SuccessResponseBody);
     }
     catch (err) {
-        ErrorResponseBody.message = err.message;
-        ErrorResponseBody.error = err.explanation;
-        return res.status(err.statusCode).json(ErrorResponseBody);
+        ErrorResponseBody.message = "Cannot delete user";
+        ErrorResponseBody.error = err.message;
+        const statusCode = err.statusCode || ServerErrorCodes.INTERNAL_SERVER_ERROR;
+        return res.status(statusCode).json(ErrorResponseBody);
     }
 }
 
 module.exports = {
     getUser,
-    createUser,
+    signUp,
     updateUser,
     deleteUser,
     signIn

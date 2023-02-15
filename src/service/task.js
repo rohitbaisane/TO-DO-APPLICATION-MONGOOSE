@@ -1,60 +1,49 @@
 const Task = require("../models/task");
-const User = require("../modles/User");
+const User = require("../models/user");
 
 const { ServerErrorCodes, ClientErrorCodes, SuccessCodes } = require("../utils/status-codes");
-const { AppError, ClientError } = require("../utils/Error");
 
-const getTask = async (taskId) => {
-    try {
-        const task = await Task.findById(taskId);
-        return task;
+const getTask = async (taskId, user) => {
+    const task = await Task.findOne({ _id: taskId, userId: user._id });
+    if (!task) {
+        throw {
+            message: "No task exist for corrosponding user",
+            statusCode: ClientErrorCodes.BAD_REQUESET,
+        };
     }
-    catch (err) {
-        throw new AppError("Error in service layer", err.message);
-    }
+    return task;
 }
 
 const createTask = async (data) => {
-    try {
-        const task = await Task.create(data);
-        return task;
-    }
-    catch (err) {
-        if (err.name == "ValidationError") {
-            throw new ClientError("Cannot create user", err.message, ClientErrorCodes.BAD_REQUESET);
-        }
-        throw new AppError("Error in service layer", err.message);
-    }
-
+    const task = await Task.create(data);
+    return task;
 }
 
-const updateTask = async (taskId, data) => {
-    try {
-        const task = await Task.findByIdAndUpdate(taskId, data, { new: true, runValidators: true });
-        return task;
+const updateTask = async (taskId, data, userId) => {
+    const task = await Task.findOneAndUpdate({ _id: taskId, userId }, data, { new: true, runValidators: true });
+    if (!task) {
+        throw {
+            message: "No task exist for corrosponding user",
+            statusCode: ClientErrorCodes.BAD_REQUESET
+        };
     }
-    catch (err) {
-        if (err.name == "ValidationError") {
-            throw new ClientError("Cannot create user", err.message, ClientErrorCodes.BAD_REQUESET);
-        }
-        throw new AppError("Error in service layer", err.message);
-    }
-}
-const deleteTask = async (taskId) => {
-    try {
-        const task = await Task.findByIdAndRemove(taskId);
-        return task;
-    }
-    catch (err) {
-        throw new AppError("Error in service layer", err.message);
-    }
-}
+    return task;
 
-
+}
+const deleteTask = async (taskId, userId) => {
+    const task = await Task.findOneAndRemove({ _id: taskId, userId });
+    if (!task) {
+        throw {
+            message: "No task exist for corrosponding user",
+            statusCode: ClientErrorCodes.BAD_REQUESET
+        };
+    }
+    return task;
+}
 
 module.exports = {
     getTask,
     createTask,
     updateTask,
     deleteTask,
-};
+}; 

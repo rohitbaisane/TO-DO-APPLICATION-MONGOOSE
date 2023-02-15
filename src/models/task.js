@@ -4,11 +4,15 @@ const taskSchema = new mongoose.Schema({
     description: {
         type: String,
         required: true,
-    }
+    },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+    },
 }, {
     timestamps: true
 });
 
-const Task = mongoose.model("Task", taskSchema);
+const Task = mongoose.model("Task", taskSchema, "tasks");
 
 module.exports = Task;
