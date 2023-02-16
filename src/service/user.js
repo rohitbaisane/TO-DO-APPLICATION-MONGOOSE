@@ -4,7 +4,9 @@ const Token = require("../models/token");
 
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
-const { sendMail } = require("../utils/helper");
+
+const { sendMail } = require("./sendMail");
+
 const { ClientErrorCodes } = require("../utils/status-codes");
 const { JWT_SECREATE_KEY } = require("../config/config");
 
