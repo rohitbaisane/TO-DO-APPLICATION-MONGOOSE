@@ -1,11 +1,15 @@
 const User = require("../models/user");
+const Token = require("../models/token");
 
+
+const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
-
+const { sendMail } = require("../utils/helper");
 const { ClientErrorCodes } = require("../utils/status-codes");
 const { JWT_SECREATE_KEY } = require("../config/config");
 
 const bcrypt = require("bcryptjs");
+const ErrorResponse = require("../utils/error");
 
 
 const signIn = async (data) => {
@@ -14,17 +18,12 @@ const signIn = async (data) => {
 
     //Check whether user exist for given email id or not.
     const userRecord = await getUserByEmail(email);
-    if (!userRecord) {
-        throw {
-            message: "Email id is wrong",
-            statusCode: ClientErrorCodes.BAD_REQUESET,
-        };
-    }
-    else if (!bcrypt.compareSync(password, userRecord.password)) {
-        throw {
-            message: "Password is wrong",
-            statusCode: ClientErrorCodes.BAD_REQUESET,
-        };
+
+    if (!bcrypt.compareSync(password, userRecord.password)) {
+        throw new ErrorResponse(
+            "Password is wrong",
+            ClientErrorCodes.BAD_REQUESET,
+        );
     }
 
     //create jwt token 
@@ -55,8 +54,38 @@ const deleteUser = async (userId) => {
     return userRecord;
 }
 
+const resetPasswordRequest = async (email) => {
+    const userRecord = await getUserByEmail(email);
+    const userId = userRecord._id;
+    const tokenRecord = await Token.findOne({ userId });
+
+    if (tokenRecord)
+        await tokenRecord.deleteOne();
+
+    const resetToken = crypto.randomBytes(32).toString("hex");
+
+    await Token.create({
+        token: resetToken,
+        userId
+    });
+
+    const resetLink = `http://localhost:3000/resetpassword?token=${resetToken}&id=${userId}`;
+
+    sendMail(resetLink, email).then((response) => {
+        console.log(response);
+    });
+    return true;
+}
 async function getUserByEmail(email) {
+
     const userRecord = await User.findOne({ email });
+    console.log(userRecord);
+    if (!userRecord) {
+        throw new ErrorResponse(
+            "Email id is wrong",
+            ClientErrorCodes.BAD_REQUESET,
+        );
+    }
     return userRecord;
 }
 function createJwtToken(user) {
@@ -69,5 +98,7 @@ module.exports = {
     createUser,
     updateUser,
     deleteUser,
-    signIn
+    signIn,
+    getUserByEmail,
+    resetPasswordRequest
 };
