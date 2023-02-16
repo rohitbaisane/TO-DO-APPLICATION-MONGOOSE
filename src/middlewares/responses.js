@@ -1,4 +1,4 @@
-const asyncHandler = require("./asyncHandler");
+const asyncHandler = require("../utils/asyncHandler");
 const responses = asyncHandler(async (req, res, next) => {
     res.OK = (responseBody) => {
         return res.status(200).json(responseBody);

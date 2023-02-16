@@ -1,9 +1,7 @@
-const asyncHandler = require("../middlewares/asyncHandler");
+const asyncHandler = require("../utils/asyncHandler");
 const { TaskService } = require("../service/index");
 
 const { createSuccessResponse } = require("../utils/generateResponses");
-const { SuccessCodes } = require("../utils/status-codes");
-
 
 const getTask = asyncHandler(async (req, res) => {
     const data = { ...req.params, userId: req.user._id };
@@ -23,8 +21,8 @@ const createTask = asyncHandler(async (req, res) => {
 });
 
 const updateTask = asyncHandler(async (req, res) => {
-    const data = { ...req.params, userId: req.user._id };
-    const taskRecord = await TaskService.updateTask(data.id, req.body, data.userId);
+    const data = { ...req.params, userId: req.user._id, body: req.body };
+    const taskRecord = await TaskService.updateTask(data.id, data.body, data.userId);
     const responseBody = createSuccessResponse(taskRecord, "Successfully updated a task");
     return res.OK(responseBody);
 });

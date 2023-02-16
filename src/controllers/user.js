@@ -3,7 +3,7 @@ const { UserService } = require("../service/index");
 const { createSuccessResponse } = require("../utils/generateResponses");
 const { ServerErrorCodes, ClientErrorCodes, SuccessCodes } = require("../utils/status-codes");
 
-const asyncHandler = require("../middlewares/asyncHandler");
+const asyncHandler = require("../utils/asyncHandler");
 
 const getUser = asyncHandler(async (req, res) => {
     const userRecord = await UserService.getUser(req.user.id);
