@@ -1,39 +1,31 @@
 const jwt = require("jsonwebtoken");
-const { userService } = require("../service/index");
+const { UserService } = require("../service/index");
 
 const { ServerErrorCodes, ClientErrorCodes } = require("../utils/status-codes");
-const { ErrorResponseBody } = require("../utils/response");
+const { ErrorResponseBody } = require("../utils/generateResponses");
 
 const { JWT_SECREATE_KEY } = require("../config/config");
 
-const isValidUser = async (req, res, next) => {
-
-    try {
-        const token = req.headers['x-access-token'];
-        if (!token) {
-            throw {
-                message: "Token is missing",
-                statusCode: ClientErrorCodes.BAD_REQUESET
-            };
-        }
-        const object = jwt.verify(token, JWT_SECREATE_KEY);
-        const user = await userService.getUser(object.id);
-        if (!user) {
-            throw {
-                message: "No user exist for corrosponding token",
-                statusCode: ClientErrorCodes.BAD_REQUESET
-            };
-        }
-        req.user = user;
-        next();
+const asyncHandler = require("./asyncHandler");
+const isValidUser = asyncHandler(async (req, res, next) => {
+    const token = req.headers['x-access-token'];
+    if (!token) {
+        throw {
+            message: "Token is missing",
+            statusCode: ClientErrorCodes.BAD_REQUESET
+        };
     }
-    catch (err) {
-        ErrorResponseBody.err = err.explanation;
-        ErrorResponseBody.message = err.message;
-        const statusCode = err.statusCode || ServerErrorCodes.INTERNAL_SERVER_ERROR;
-        return res.status(statusCode).json(ErrorResponseBody);
+    const object = jwt.verify(token, JWT_SECREATE_KEY);
+    const userRecord = await UserService.getUser(object.id);
+    if (!userRecord) {
+        throw {
+            message: "No user exist for corrosponding token",
+            statusCode: ClientErrorCodes.BAD_REQUESET
+        };
     }
-};
+    req.user = userRecord;
+    next();
+});
 
 module.exports = isValidUser;
 

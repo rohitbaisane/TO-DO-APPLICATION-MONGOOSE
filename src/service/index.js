@@ -1,4 +1,4 @@
 module.exports = {
-    userService: require("./user"),
-    taskService: require("./task"),
+    UserService: require("./user"),
+    TaskService: require("./task"),
 }

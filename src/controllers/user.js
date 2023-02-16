@@ -1,100 +1,46 @@
-const { userService } = require("../service/index");
+const { UserService } = require("../service/index");
 
-const { SuccessResponseBody, ErrorResponseBody } = require("../utils/response");
+const { createSuccessResponse } = require("../utils/generateResponses");
 const { ServerErrorCodes, ClientErrorCodes, SuccessCodes } = require("../utils/status-codes");
 
+const asyncHandler = require("../middlewares/asyncHandler");
 
-const getUser = async (req, res) => {
-    try {
-        const user = await userService.getUser(req.user.id);
-        SuccessResponseBody.data = user;
-        SuccessResponseBody.message = "Successfully fetched a user";
-        return res.status(SuccessCodes.OK).json(SuccessResponseBody);
-    }
-    catch (err) {
-        ErrorResponseBody.message = "Cannot fetch user";
-        ErrorResponseBody.error = err.message;
-        let statusCode = err.statusCode || ServerErrorCodes.INTERNAL_SERVER_ERROR;
-        if (err.name = "Validationerror")
-            statusCode = ClientErrorCodes.BAD_REQUESET;
-        return res.status(statusCode).json(ErrorResponseBody);
-    }
-}
+const getUser = asyncHandler(async (req, res) => {
+    const userRecord = await UserService.getUser(req.user.id);
+    const successResponseBody = createSuccessResponse(userRecord, "Successfully fetched a user");
+    return res.status(SuccessCodes.OK).json(successResponseBody);
+});
 
-const signIn = async (req, res) => {
-    try {
-        const { email, password } = req.body;
-        const response = await userService.signIn({ email, password });
-        SuccessResponseBody.data = response;
-        SuccessResponseBody.message = "Successfully loggedin";
-        return res.status(SuccessCodes.OK).json(SuccessResponseBody);
-    }
-    catch (err) {
-        console.log(err);
-        ErrorResponseBody.message = "Cannot signin";
-        ErrorResponseBody.error = err.message;
-        let statusCode = err.statusCode || ServerErrorCodes.INTERNAL_SERVER_ERROR;
-        if (err.name = "Validationerror")
-            statusCode = ClientErrorCodes.BAD_REQUESET;
-        return res.status(statusCode).json(ErrorResponseBody);
-    }
+const signIn = asyncHandler(async (req, res) => {
+    const { email, password } = req.body;
+    const response = await UserService.signIn({ email, password });
+    const successResponseBody = createSuccessResponse(response, "Successfully loggedin");
+    return res.status(SuccessCodes.OK).json(successResponseBody);
+});
 
-}
-const signUp = async (req, res) => {
-    try {
-        const { name, email, password } = req.body;
-        const user = await userService.createUser({
-            name,
-            email,
-            password
-        });
-        SuccessResponseBody.data = user;
-        SuccessResponseBody.message = "Successfully created account";
-        return res.status(SuccessCodes.CREATED).json(SuccessResponseBody);
-    }
-    catch (err) {
-        console.log(err);
-        ErrorResponseBody.message = "Cannot create user";
-        ErrorResponseBody.error = err.message;
-        let statusCode = err.statusCode || ServerErrorCodes.INTERNAL_SERVER_ERROR;
-        if (err.name = "Validationerror")
-            statusCode = ClientErrorCodes.BAD_REQUESET;
-        return res.status(statusCode).json(ErrorResponseBody);
-    }
-}
+const signUp = asyncHandler(async (req, res) => {
+    const { name, email, password } = req.body;
+    const userRecord = await UserService.createUser({
+        name,
+        email,
+        password
+    });
+    const successResponseBody = createSuccessResponse(userRecord, "Successfully created account");
+    return res.status(SuccessCodes.CREATED).json(successResponseBody);
+});
 
-const updateUser = async (req, res) => {
-    try {
-        const user = await userService.updateUser(req.user.id, req.body);
-        SuccessResponseBody.data = user;
-        SuccessResponseBody.message = "Successfully updated a user";
-        return res.status(SuccessCodes.OK).json(SuccessResponseBody);
-    }
-    catch (err) {
-        ErrorResponseBody.message = "Cannot update user";
-        ErrorResponseBody.error = err.message;
-        let statusCode = err.statusCode || ServerErrorCodes.INTERNAL_SERVER_ERROR;
-        if (err.name = "Validationerror")
-            statusCode = ClientErrorCodes.BAD_REQUESET;
-        return res.status(statusCode).json(ErrorResponseBody);
-    }
-}
+const updateUser = asyncHandler(async (req, res) => {
+    const userRecord = await UserService.updateUser(req.user.id, req.body);
+    const successResponseBody = createSuccessResponse(userRecord, "Successfully updated a user");
+    return res.status(SuccessCodes.OK).json(successResponseBody);
+});
 
 
-const deleteUser = async (req, res) => {
-    try {
-        const response = await userService.deleteUser(req.user.id);
-        SuccessResponseBody.data = response;
-        SuccessResponseBody.message = "Successfully deleted a user";
-        return res.status(SuccessCodes.OK).json(SuccessResponseBody);
-    }
-    catch (err) {
-        ErrorResponseBody.message = "Cannot delete user";
-        ErrorResponseBody.error = err.message;
-        const statusCode = err.statusCode || ServerErrorCodes.INTERNAL_SERVER_ERROR;
-        return res.status(statusCode).json(ErrorResponseBody);
-    }
-}
+const deleteUser = asyncHandler(async (req, res) => {
+    const userRecord = await UserService.deleteUser(req.user.id);
+    const successResponseBody = createSuccessResponse(userRecord, "Successfully deleted a user");
+    return res.status(SuccessCodes.OK).json(successResponseBody);
+});
 
 module.exports = {
     getUser,

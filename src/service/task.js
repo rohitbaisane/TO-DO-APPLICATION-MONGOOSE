@@ -5,45 +5,46 @@ const { ClientErrorCodes } = require("../utils/status-codes");
 
 
 // GET TASK BY ID -> /task/:id
-const getTask = async (taskId, user) => {
-    const task = await Task.findOne({ _id: taskId, userId: user._id });
-    if (!task) {
+const getTask = async (taskId, userId) => {
+    const taskRecord = await Task.findOne({ _id: taskId, userId });
+
+    if (!taskRecord) {
         throw {
             message: "No task exist for corrosponding user",
             statusCode: ClientErrorCodes.BAD_REQUESET,
         };
     }
-    return task;
+    return taskRecord;
 }
 
 const createTask = async (data) => {
-    const task = await Task.create(data);
-    return task;
+    const taskRecord = await Task.create(data);
+    return taskRecord;
 }
 
 // UPDATE TASK BY ID -> PATCH -> /task/:id
 const updateTask = async (taskId, data, userId) => {
-    const task = await Task.findOneAndUpdate({ _id: taskId, userId }, data, { new: true, runValidators: true });
-    if (!task) {
+    const taskRecord = await Task.findOneAndUpdate({ _id: taskId, userId }, data, { new: true, runValidators: true });
+    if (!taskRecord) {
         throw {
             message: "No task exist for corrosponding user",
             statusCode: ClientErrorCodes.BAD_REQUESET
         };
     }
-    return task;
+    return taskRecord;
 
 }
 
 // DELETE TASK BY ID -> /task/:id
 const deleteTask = async (taskId, userId) => {
-    const task = await Task.findOneAndRemove({ _id: taskId, userId });
-    if (!task) {
+    const taskRecord = await Task.findOneAndRemove({ _id: taskId, userId });
+    if (!taskRecord) {
         throw {
             message: "No task exist for corrosponding user",
             statusCode: ClientErrorCodes.BAD_REQUESET
         };
     }
-    return task;
+    return taskRecord;
 }
 
 module.exports = {

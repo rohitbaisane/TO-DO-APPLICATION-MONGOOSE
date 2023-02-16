@@ -4,6 +4,7 @@ const app = express();
 require("./db");
 
 const { PORT } = require("./config/config");
+const errorHandler = require("./middlewares/errorHandler");
 const apiRoutes = require("./routes/index");
 
 // prepare and start the starver.
@@ -15,6 +16,7 @@ const prepareAndStartServer = async (req, res) => {
     app.use(express.json());
 
     app.use("/", apiRoutes);
+    app.use(errorHandler)
 
     app.listen(PORT, () => {
         console.log("Server is listening");
