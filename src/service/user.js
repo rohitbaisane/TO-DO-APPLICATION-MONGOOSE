@@ -1,3 +1,4 @@
+const Task = require("../models/task");
 const User = require("../models/user");
 const Token = require("../models/token");
 
@@ -51,6 +52,7 @@ const updateUser = async (userId, data) => {
 
 // DELETE USER BY ID -> /user/:id
 const deleteUser = async (userId) => {
+    await Task.deleteMany({ userId });
     const userRecord = await User.findByIdAndRemove(userId);
     return userRecord;
 }
