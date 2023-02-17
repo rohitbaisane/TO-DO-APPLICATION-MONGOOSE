@@ -17,7 +17,6 @@ const ErrorResponse = require("../utils/error");
 const signIn = async (data) => {
 
     const { email, password } = data;
-
     //Check whether user exist for given email id or not.
     const userRecord = await getUserByEmail(email);
 
@@ -35,6 +34,8 @@ const signIn = async (data) => {
 
 // GET USER BY ID -,  /user/:id 
 const getUser = async (userId) => {
+    console.log(userId);
+    console.log(typeof userId);
     const userRecord = await User.findById(userId);
     return userRecord;
 }
@@ -71,17 +72,28 @@ const resetPasswordRequest = async (email) => {
         userId
     });
 
-    const resetLink = `http://localhost:3000/resetpassword?token=${resetToken}&id=${userId}`;
+    const resetLink = `http://localhost:3000/changepassword?token=${resetToken}&userId=${userId}`;
 
     sendMail(resetLink, email).then((response) => {
-        console.log(response);
+        console.log("Email is sent successfully");
     });
     return true;
+}
+
+const changePassword = async (token, userId, newPassword) => {
+    const tokenRecord = await Token.findOne({ token });
+    if (!tokenRecord)
+        throw new ErrorResponse(
+            "Invalid reset token",
+            ClientErrorCodes.BAD_REQUESET);
+
+    const userRecord = await User.findByIdAndUpdate(userId, { password: newPassword }, { new: true, runValidators: true });
+    return userRecord;
+
 }
 async function getUserByEmail(email) {
 
     const userRecord = await User.findOne({ email });
-    console.log(userRecord);
     if (!userRecord) {
         throw new ErrorResponse(
             "Email id is wrong",
@@ -102,5 +114,6 @@ module.exports = {
     deleteUser,
     signIn,
     getUserByEmail,
-    resetPasswordRequest
+    resetPasswordRequest,
+    changePassword
 };

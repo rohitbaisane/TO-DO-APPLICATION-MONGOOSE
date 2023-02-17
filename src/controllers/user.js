@@ -48,8 +48,11 @@ const resetPasswordRequest = asyncHandler(async (req, res) => {
     return res.OK(responseBody);
 });
 
-const resetPassword = asyncHandler(async (req, res) => {
-
+const changePassword = asyncHandler(async (req, res) => {
+    const data = { ...req.query, ...req.body };
+    const response = await UserService.changePassword(data.token, data.userId, data.password);
+    const responseBody = createSuccessResponse(response, "Successfully changed a password");
+    return res.OK(responseBody);
 });
 
 
@@ -60,5 +63,5 @@ module.exports = {
     deleteUser,
     signIn,
     resetPasswordRequest,
-    resetPassword,
+    changePassword,
 }

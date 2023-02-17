@@ -21,8 +21,21 @@ const userSchema = new mongoose.Schema({
     timestamps: true
 });
 
+/*userSchema.pre("findOneAndUpdate", function (next) {
+const user = this;
+console.log(this.isModified);
+if (!this.isModified("password")) {
+    return next();
+}
+const hashedPassword = bcrypt.hashSync(user.password, 8);
+user.password = hashedPassword;
+next();})*/
+
 userSchema.pre("save", function (next) {
     const user = this;
+    if (!this.isModified("password")) {
+        return next();
+    }
     const hashedPassword = bcrypt.hashSync(user.password, 8);
     user.password = hashedPassword;
     next();
