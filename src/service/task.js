@@ -4,6 +4,11 @@ const User = require("../models/user");
 const { ClientErrorCodes } = require("../utils/status-codes");
 const ErrorResponse = require("../utils/error");
 
+const getAllTasks = async (userId) => {
+    const taskRecords = await Task.find({ userId });
+    return taskRecords;
+}
+
 // GET TASK BY ID -> /task/:id
 const getTask = async (taskId, userId) => {
 
@@ -54,6 +59,7 @@ const deleteTask = async (taskId, userId) => {
 
 module.exports = {
     getTask,
+    getAllTasks,
     createTask,
     updateTask,
     deleteTask,

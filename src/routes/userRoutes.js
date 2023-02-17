@@ -1,16 +1,16 @@
 const express = require("express");
 const router = express.Router();
 
-const { userController } = require("../controllers/index");
+const { UserController } = require("../controllers/index");
 
 const isValidUser = require("../middlewares/auth");
 
-router.get("/user/me", isValidUser, userController.getUser);
-router.post("/resetpassword", userController.resetPasswordRequest);
-router.post("/changepassword", userController.changePassword);
-router.post("/user", userController.signUp);
-router.post("/signin", userController.signIn);
-router.patch("/user/me", isValidUser, userController.updateUser);
-router.delete("/user/me", isValidUser, userController.deleteUser);
+router.get("/user/me", isValidUser, UserController.getUser);
+router.post("/resetpassword", UserController.resetPasswordRequest);
+router.post("/changepassword", UserController.changePassword);
+router.post("/user", UserController.signUp);
+router.post("/signin", UserController.signIn);
+router.patch("/user/me", isValidUser, UserController.updateUser);
+router.delete("/user/me", isValidUser, UserController.deleteUser);
 
 module.exports = router;

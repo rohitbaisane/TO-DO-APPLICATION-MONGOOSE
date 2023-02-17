@@ -5,7 +5,7 @@ const Token = require("../models/token");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 
-const { sendMail } = require("./sendMail");
+const { SendGmail } = require("./sendMail");
 
 const { ClientErrorCodes } = require("../utils/status-codes");
 const { JWT_SECREATE_KEY } = require("../config/config");
@@ -34,8 +34,6 @@ const signIn = async (data) => {
 
 // GET USER BY ID -,  /user/:id 
 const getUser = async (userId) => {
-    console.log(userId);
-    console.log(typeof userId);
     const userRecord = await User.findById(userId);
     return userRecord;
 }
@@ -74,7 +72,7 @@ const resetPasswordRequest = async (email) => {
 
     const resetLink = `http://localhost:3000/changepassword?token=${resetToken}&userId=${userId}`;
 
-    sendMail(resetLink, email).then((response) => {
+    SendGmail(resetLink, email).then((response) => {
         console.log("Email is sent successfully");
     });
     return true;

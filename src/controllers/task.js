@@ -1,8 +1,18 @@
 const asyncHandler = require("../utils/asyncHandler");
 const { TaskService } = require("../service/index");
 
+const checkMandatoryFields = require("./common");
+
 const { createSuccessResponse } = require("../utils/generateResponses");
 
+
+const getAllTasks = asyncHandler(async (req, res) => {
+    const data = { userId: req.user._id };
+    const taskRecords = await TaskService.getAllTasks(data.userId);
+    const responseBody = createSuccessResponse(taskRecords, "Successfully fetched all tasks");
+    return res.OK(responseBody);
+
+});
 const getTask = asyncHandler(async (req, res) => {
     const data = { ...req.params, userId: req.user._id };
     const taskRecord = await TaskService.getTask(data.id, data.userId);
@@ -12,6 +22,7 @@ const getTask = asyncHandler(async (req, res) => {
 
 const createTask = asyncHandler(async (req, res) => {
     const data = { ...req.body, userId: req.user._id };
+    checkMandatoryFields(data, ['description']);
     const taskRecord = await TaskService.createTask({
         description: data.description,
         userId: data.userId,
@@ -37,6 +48,7 @@ const deleteTask = asyncHandler(async (req, res) => {
 
 module.exports = {
     getTask,
+    getAllTasks,
     createTask,
     updateTask,
     deleteTask,

@@ -1,7 +1,7 @@
 const nodeMailer = require("nodemailer");
 
 const { username, PASSWORD } = require("../config/config");
-const sendMail = async (data, email) => {
+const SendGmail = async (data, email) => {
     const transporter = nodeMailer.createTransport({
         host: "service.gmail.com",
         service: "gmail",
@@ -23,5 +23,5 @@ const sendMail = async (data, email) => {
 
 
 module.exports = {
-    sendMail,
+    SendGmail,
 }

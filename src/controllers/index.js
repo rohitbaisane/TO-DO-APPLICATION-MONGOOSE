@@ -1,4 +1,4 @@
 module.exports = {
-    userController: require("./user"),
-    taskController: require("./task"),
+    UserController: require("./user"),
+    TaskController: require("./task"),
 }
